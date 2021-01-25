@@ -1304,4 +1304,11 @@ public class KMJCardSimulator implements KMSEProvider {
     // TODO Auto-generated method stub
     return false;
   }
+
+  @Override
+  public void onUninstall() {
+    // TODO Auto-generated method stub
+    jCardSimulator = null;
+    
+  }
 }

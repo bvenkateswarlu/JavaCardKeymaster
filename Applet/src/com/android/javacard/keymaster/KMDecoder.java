@@ -413,4 +413,8 @@ public class KMDecoder {
     totalLen +=  (short)( startOff - bufOffset);
     return totalLen;
   }
+  
+  public void onUninstall() {
+    
+  }
 }

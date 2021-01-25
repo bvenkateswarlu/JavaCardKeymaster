@@ -37,6 +37,10 @@ public class KMException extends RuntimeException {
   public void clear(){
     reason = KMError.UNKNOWN_ERROR;
   }
+  
+  public static void onUninstall() {
+    exception = null;
+  }
 }
 
 

@@ -279,7 +279,7 @@ public class KMRepository implements KMUpgradable {
 
   public void onUninstall() {
     // Javacard Runtime environment cleans up the data.
-
+    repository = null;
   }
 
   public void onProcess() {}

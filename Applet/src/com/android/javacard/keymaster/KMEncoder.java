@@ -374,4 +374,7 @@ public class KMEncoder {
   }
 
    */
+  public void onUninstall() {
+    
+  }
 }

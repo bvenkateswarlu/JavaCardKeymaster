@@ -1208,4 +1208,10 @@ public class KMAndroidSEProvider implements KMSEProvider {
   public  boolean isUpgrading() {
     return UpgradeManager.isUpgrading();
   }
+  
+  @Override
+  public void onUninstall() {
+    androidSEProvider = null;
+    aesGcmCipher = null;
+  }
 }

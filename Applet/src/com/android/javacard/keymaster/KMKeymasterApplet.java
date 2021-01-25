@@ -222,6 +222,10 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
   @Override
   public void uninstall() {
     repository.onUninstall();
+    seProvider.onUninstall();
+    KMException.onUninstall();
+    encoder.onUninstall();
+    decoder.onUninstall();
   }
 
   private short mapISOErrorToKMError(short reason) {

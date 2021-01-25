@@ -472,4 +472,6 @@ public interface KMSEProvider extends KMUpgradable {
    * @return true if upgrading, otherwise false.
    */
   boolean isUpgrading();
+  
+  void onUninstall();
 }
