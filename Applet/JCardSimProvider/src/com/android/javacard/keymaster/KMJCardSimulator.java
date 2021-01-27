@@ -1277,38 +1277,36 @@ public class KMJCardSimulator implements KMSEProvider {
 
   @Override
   public void onSave(Element ele) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public void onRestore(Element ele) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public short getBackupPrimitiveByteCount() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public short getBackupObjectCount() {
-    // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
   public boolean isUpgrading() {
-    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public void onUninstall() {
-    // TODO Auto-generated method stub
     jCardSimulator = null;
-    
+    kdf = null;
+    hmacSignature = null;
+    rngCounter = null;
+    aesRngKey = null;
+    aesRngCipher = null;
+    entropyPool = null;
+    rndNum = null;
   }
 }

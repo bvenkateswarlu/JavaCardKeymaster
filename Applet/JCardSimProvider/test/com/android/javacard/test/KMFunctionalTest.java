@@ -421,8 +421,8 @@ public class KMFunctionalTest {
   public KMFunctionalTest(){
     cryptoProvider = new KMJCardSimulator();
     simulator = new CardSimulator();
-    encoder = new KMEncoder();
-    decoder = new KMDecoder();
+    encoder = KMEncoder.getInstance();
+    decoder = KMDecoder.getInstance();
   }
 
   private void init(){
@@ -1572,7 +1572,7 @@ public class KMFunctionalTest {
     CommandAPDU commandAPDU = new CommandAPDU(0x80, INS_GET_HMAC_SHARING_PARAM_CMD, 0x40, 0x00);
     //print(commandAPDU.getBytes());
     ResponseAPDU response = simulator.transmitCommand(commandAPDU);
-    KMDecoder dec = new KMDecoder();
+    KMDecoder dec = KMDecoder.getInstance();
     short ret = KMArray.instance((short) 2);
     KMArray.cast(ret).add((short) 0, KMInteger.exp());
     short inst = KMHmacSharingParameters.exp();
@@ -1595,7 +1595,7 @@ public class KMFunctionalTest {
     CommandAPDU commandAPDU = new CommandAPDU(0x80, INS_GET_HMAC_SHARING_PARAM_CMD, 0x40, 0x00);
     //print(commandAPDU.getBytes());
     ResponseAPDU response = simulator.transmitCommand(commandAPDU);
-    KMDecoder dec = new KMDecoder();
+    KMDecoder dec = KMDecoder.getInstance();
     short ret = KMArray.instance((short) 2);
     KMArray.cast(ret).add((short) 0, KMInteger.exp());
     short inst = KMHmacSharingParameters.exp();

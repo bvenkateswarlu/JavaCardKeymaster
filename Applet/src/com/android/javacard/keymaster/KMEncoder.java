@@ -44,8 +44,15 @@ public class KMEncoder {
   private short length;
   private static short[] stack;
   private static byte stackPtr;
+  private static KMEncoder encoder = null;
 
-  public KMEncoder() {
+  public static KMEncoder getInstance() {
+    if (encoder == null)
+      encoder = new KMEncoder();
+    return encoder;
+  }
+
+  private KMEncoder() {
     buffer = null;
     startOff = 0;
     length = 0;
@@ -375,6 +382,6 @@ public class KMEncoder {
 
    */
   public void onUninstall() {
-    
+    encoder = null;
   }
 }

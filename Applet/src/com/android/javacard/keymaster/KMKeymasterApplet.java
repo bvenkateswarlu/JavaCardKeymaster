@@ -194,8 +194,8 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
       repository.initMasterKey(buf, (short)0, KMRepository.MASTER_KEY_SIZE);
     }
     KMType.initialize();
-    encoder = new KMEncoder();
-    decoder = new KMDecoder();
+    encoder = KMEncoder.getInstance();
+    decoder = KMDecoder.getInstance();
   }
 
   /**

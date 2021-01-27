@@ -42,8 +42,15 @@ public class KMDecoder {
   private short length;
   private short tagType;
   private short tagKey;
+  private static KMDecoder decoder = null;
 
-  public KMDecoder() {
+  public static KMDecoder getInstance() {
+    if (decoder == null)
+      decoder = new KMDecoder();
+    return decoder;
+  }
+
+  private KMDecoder() {
     buffer = null;
     startOff = 0;
     length = 0;
@@ -415,6 +422,6 @@ public class KMDecoder {
   }
   
   public void onUninstall() {
-    
+    decoder = null;
   }
 }
