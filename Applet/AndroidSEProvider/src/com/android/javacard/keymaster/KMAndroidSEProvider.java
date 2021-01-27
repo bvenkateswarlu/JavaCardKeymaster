@@ -18,6 +18,8 @@ package com.android.javacard.keymaster;
 import org.globalplatform.upgrade.Element;
 import org.globalplatform.upgrade.UpgradeManager;
 
+import com.android.javacard.keymaster.KMKeymasterApplet;
+
 import javacard.framework.JCSystem;
 import javacard.framework.Util;
 import javacard.security.AESKey;
@@ -153,6 +155,8 @@ public class KMAndroidSEProvider implements KMSEProvider {
   private Signature hmacSignature;
   //For ImportwrappedKey operations.
   private KMRsaOAEPEncoding rsaOaepDecipher;
+  // Master key.
+  private AESKey masterKey;
 
   // Entropy
   private RandomData rng;
@@ -197,17 +201,25 @@ public class KMAndroidSEProvider implements KMSEProvider {
     // Temporary transient array created to use locally inside functions.
     tmpArray = JCSystem.makeTransientByteArray(TMP_ARRAY_SIZE,
         JCSystem.CLEAR_ON_DESELECT);
-
     // Random number generator initialisation.
     rng = RandomData.getInstance(RandomData.ALG_KEYGENERATION);
     //Allocate buffer for certificate chain.
     if(!isUpgrading())
       certificateChain = new byte[CERT_CHAIN_MAX_SIZE];
+    // initialize master key
+    initMasterKey();
     androidSEProvider = this;
   }
 
   public void clean() {
     Util.arrayFillNonAtomic(tmpArray, (short) 0, (short) 256, (byte) 0);
+  }
+
+  private void initMasterKey() {
+    masterKey = (AESKey) KeyBuilder.buildKey(KeyBuilder.TYPE_AES,
+            (short) (KMKeymasterApplet.MASTER_KEY_SIZE * 8), false);
+    getTrueRandomNumber(tmpArray, (short) 0, KMKeymasterApplet.MASTER_KEY_SIZE);
+    masterKey.setKey(tmpArray, (short) 0);
   }
 
   private void initECKey() {
@@ -1187,11 +1199,13 @@ public class KMAndroidSEProvider implements KMSEProvider {
   @Override
   public void onSave(Element element) {
     element.write(certificateChain);
+    element.write(masterKey);
   }
 
   @Override
   public void onRestore(Element element) {
     certificateChain = (byte[]) element.readObject();
+    masterKey = (AESKey) element.readObject();
   }
 
   @Override
@@ -1201,7 +1215,7 @@ public class KMAndroidSEProvider implements KMSEProvider {
 
   @Override
   public short getBackupObjectCount() {
-    return (short) 1;
+    return (short) 2;
   }
 
   @Override
@@ -1213,5 +1227,10 @@ public class KMAndroidSEProvider implements KMSEProvider {
   public void onUninstall() {
     androidSEProvider = null;
     aesGcmCipher = null;
+  }
+
+  @Override
+  public void getMasterKey(byte[] buf, short off, short len) {
+    masterKey.getKey(buf, (short) off);
   }
 }

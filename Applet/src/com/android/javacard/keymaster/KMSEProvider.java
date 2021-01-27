@@ -1,5 +1,7 @@
 package com.android.javacard.keymaster;
 
+import javacard.security.AESKey;
+
 import org.globalplatform.upgrade.Element;
 
 /**
@@ -473,5 +475,16 @@ public interface KMSEProvider extends KMUpgradable {
    */
   boolean isUpgrading();
   
+  /**
+   * This function returns the master key.
+   * @param buf  is the buffer of the output key data.
+   * @param off is the offset of the buffer.
+   * @param len length of the buffer.
+   */
+  void getMasterKey(byte[] buf, short off, short len);
+
+  /**
+   * The implementation of this function should release the resources.
+   */
   void onUninstall();
 }

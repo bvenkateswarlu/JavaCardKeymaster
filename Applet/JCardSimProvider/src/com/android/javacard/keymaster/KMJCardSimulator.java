@@ -84,6 +84,7 @@ public class KMJCardSimulator implements KMSEProvider {
   private static byte[] entropyPool;
   private static byte[] rndNum;
   private byte[] certificateChain;
+  private static AESKey masterKey;
 
   private static KMJCardSimulator jCardSimulator = null;
 
@@ -110,9 +111,18 @@ public class KMJCardSimulator implements KMSEProvider {
     // various ciphers
     //Allocate buffer for certificate chain.
     certificateChain = new byte[CERT_CHAIN_MAX_SIZE];
+    //initialize masterKey
+    initMasterKey();
     jCardSimulator = this;
   }
 
+  private void initMasterKey() {
+    masterKey = (AESKey) KeyBuilder.buildKey(KeyBuilder.TYPE_AES,
+            (short) (KMKeymasterApplet.MASTER_KEY_SIZE * 8), false);
+    byte[] buf = new byte[KMKeymasterApplet.MASTER_KEY_SIZE];
+    getTrueRandomNumber(buf, (short) 0, KMKeymasterApplet.MASTER_KEY_SIZE);
+    masterKey.setKey(buf, (short) 0);
+  }
    
   public KeyPair createRsaKeyPair() {
     KeyPair rsaKeyPair = new KeyPair(KeyPair.ALG_RSA, KeyBuilder.LENGTH_RSA_2048);
@@ -1308,5 +1318,12 @@ public class KMJCardSimulator implements KMSEProvider {
     aesRngCipher = null;
     entropyPool = null;
     rndNum = null;
+    masterKey = null;
   }
+
+  @Override
+  public void getMasterKey(byte[] buf, short off, short len) {
+    masterKey.getKey(buf, (short) off);
+  }
+
 }
