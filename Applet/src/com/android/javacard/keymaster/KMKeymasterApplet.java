@@ -35,7 +35,6 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
   // Constants.
   public static final byte AES_BLOCK_SIZE = 16;
   public static final byte DES_BLOCK_SIZE = 8;
-  public static final short MASTER_KEY_SIZE = (short) 16;
   public static final short MAX_LENGTH = (short) 0x2000;
   private static final byte CLA_ISO7816_NO_SM_NO_CHAN = (byte) 0x80;
   private static final short KM_HAL_VERSION = (short) 0x4000;
@@ -191,6 +190,8 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
         JCSystem.makeTransientShortArray((short) TMP_VARIABLE_ARRAY_SIZE, JCSystem.CLEAR_ON_RESET);
     if(!isUpgrading) {
       keymasterState = KMKeymasterApplet.INIT_STATE;
+      seProvider.getTrueRandomNumber(buf, (short) 0, KMRepository.MASTER_KEY_SIZE);
+      repository.initMasterKey(buf, (short)0, KMRepository.MASTER_KEY_SIZE);
     }
     KMType.initialize();
     encoder = KMEncoder.getInstance();
@@ -264,7 +265,7 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
       default:
         return KMError.UNKNOWN_ERROR;
     }
-  }  
+  }
 
   protected void validateApduHeader(APDU apdu) {
     // Read the apdu header and buffer.
@@ -1533,11 +1534,7 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
     }
 
     //master key.
-    tmpVariables[2] = KMByteBlob.instance(MASTER_KEY_SIZE);
-    seProvider.getMasterKey(
-            KMByteBlob.cast(tmpVariables[2]).getBuffer(),
-            KMByteBlob.cast(tmpVariables[2]).getStartOff(),
-            KMByteBlob.cast(tmpVariables[2]).length());
+    tmpVariables[2] = repository.getMasterKeySecret();
     cert.makeUniqueId(
             scratchPad,
             (short) 0,
@@ -3910,11 +3907,7 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
     //    Input data - Encrypted output (Generated in step 2).
     // 4. HMAC Sign generates an output of 32 bytes length.
     //    Consume only first 16 bytes as derived key.
-    tmpVariables[4] = KMByteBlob.instance(MASTER_KEY_SIZE);
-    seProvider.getMasterKey(
-            KMByteBlob.cast(tmpVariables[4]).getBuffer(),
-            KMByteBlob.cast(tmpVariables[4]).getStartOff(),
-            KMByteBlob.cast(tmpVariables[4]).length());
+    tmpVariables[4] = repository.getMasterKeySecret();
     tmpVariables[5] = repository.alloc(AES_GCM_AUTH_TAG_LENGTH);
     tmpVariables[3] =
             seProvider.aesGCMEncrypt(

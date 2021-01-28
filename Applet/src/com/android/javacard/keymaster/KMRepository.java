@@ -22,6 +22,8 @@ import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 import javacard.framework.JCSystem;
 import javacard.framework.Util;
+import javacard.security.AESKey;
+import javacard.security.KeyBuilder;
 
 /**
  * KMRepository class manages persistent and volatile memory usage by the applet. Note the repository
@@ -67,6 +69,7 @@ public class KMRepository implements KMUpgradable {
   public static final byte BOOT_DEVICE_LOCKED_TIME = 22;
 
   // Data Item sizes
+  public static final short MASTER_KEY_SIZE = (short) 16;
   public static final short SHARED_SECRET_KEY_SIZE = 32;
   public static final short HMAC_SEED_NONCE_SIZE = 32;
   public static final short COMPUTED_HMAC_KEY_SIZE = 32;
@@ -88,6 +91,7 @@ public class KMRepository implements KMUpgradable {
   private byte[] dataTable;
   private short dataIndex;
   private short reclaimIndex;
+  private AESKey masterKey;
 
   // Singleton instance
   private static KMRepository repository;
@@ -247,6 +251,22 @@ public class KMRepository implements KMUpgradable {
     }
   }
 
+  /**
+   * Masterkey is stored as a Javacard Key object instead of byte array.
+   * When master key is stored as a Key object, the Javacard OS internally
+   * provides appropriate security measures for the key to avoid any potential
+   *  attacks.
+   * The master key is maintained by Repository class so the Key object is
+   * created in this class itself rather than creating it in the SEProvider.
+   */
+  public void initMasterKey(byte[] buf, short off, short len) {
+    if (len != MASTER_KEY_SIZE)
+      ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+    masterKey = (AESKey) KeyBuilder.buildKey(KeyBuilder.TYPE_AES,
+            (short) (MASTER_KEY_SIZE * 8), false);
+    masterKey.setKey(buf, off);
+  }
+
   public void initHmacSharedSecretKey(byte[] key, short start, short len) {
     if(len != SHARED_SECRET_KEY_SIZE) KMException.throwIt(KMError.INVALID_INPUT_LENGTH);
     writeDataEntry(SHARED_KEY,key,start,len);
@@ -287,6 +307,13 @@ public class KMRepository implements KMUpgradable {
 
   public void onSelect() {
     // If write through caching is implemented then this method will restore the data into cache
+  }
+
+  public short getMasterKeySecret() {
+    short key = KMByteBlob.instance(MASTER_KEY_SIZE);
+    masterKey.getKey(KMByteBlob.cast(key).getBuffer(), KMByteBlob.cast(key)
+            .getStartOff());
+    return key;
   }
 
   // This function uses memory from the back of the heap(transient memory). Call
@@ -618,12 +645,14 @@ public class KMRepository implements KMUpgradable {
   public void onSave(Element ele) {
     ele.write(dataIndex);
     ele.write(dataTable);
+    ele.write(masterKey);
   }
 
   @Override
   public void onRestore(Element ele) {
     dataIndex = ele.readShort();
     dataTable = (byte[]) ele.readObject();
+    masterKey = (AESKey) ele.readObject();
   }
 
   @Override
@@ -635,6 +664,6 @@ public class KMRepository implements KMUpgradable {
   @Override
   public short getBackupObjectCount() {
     // dataTable
-    return (short) 1;
+    return (short) 2;
   }
 }

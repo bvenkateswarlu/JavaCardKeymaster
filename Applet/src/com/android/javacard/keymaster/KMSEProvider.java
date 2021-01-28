@@ -474,14 +474,6 @@ public interface KMSEProvider extends KMUpgradable {
    * @return true if upgrading, otherwise false.
    */
   boolean isUpgrading();
-  
-  /**
-   * This function returns the master key.
-   * @param buf  is the buffer of the output key data.
-   * @param off is the offset of the buffer.
-   * @param len length of the buffer.
-   */
-  void getMasterKey(byte[] buf, short off, short len);
 
   /**
    * The implementation of this function should release the resources.

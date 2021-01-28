@@ -71,7 +71,7 @@ public class KMJCardSimulator implements KMSEProvider {
   public static final short MAX_RND_NUM_SIZE = 64;
   public static final short ENTROPY_POOL_SIZE = 16; // simulator does not support 256 bit aes keys
   public static final byte[] aesICV = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  private static final short CERT_CHAIN_MAX_SIZE = 2050;//First 2 bytes for length.
+  private static final short CERT_CHAIN_MAX_SIZE = 2500;//First 2 bytes for length.
 
 
   public static boolean jcardSim = false;
@@ -84,7 +84,6 @@ public class KMJCardSimulator implements KMSEProvider {
   private static byte[] entropyPool;
   private static byte[] rndNum;
   private byte[] certificateChain;
-  private static AESKey masterKey;
 
   private static KMJCardSimulator jCardSimulator = null;
 
@@ -111,19 +110,9 @@ public class KMJCardSimulator implements KMSEProvider {
     // various ciphers
     //Allocate buffer for certificate chain.
     certificateChain = new byte[CERT_CHAIN_MAX_SIZE];
-    //initialize masterKey
-    initMasterKey();
     jCardSimulator = this;
   }
 
-  private void initMasterKey() {
-    masterKey = (AESKey) KeyBuilder.buildKey(KeyBuilder.TYPE_AES,
-            (short) (KMKeymasterApplet.MASTER_KEY_SIZE * 8), false);
-    byte[] buf = new byte[KMKeymasterApplet.MASTER_KEY_SIZE];
-    getTrueRandomNumber(buf, (short) 0, KMKeymasterApplet.MASTER_KEY_SIZE);
-    masterKey.setKey(buf, (short) 0);
-  }
-   
   public KeyPair createRsaKeyPair() {
     KeyPair rsaKeyPair = new KeyPair(KeyPair.ALG_RSA, KeyBuilder.LENGTH_RSA_2048);
     rsaKeyPair.genKeyPair();
@@ -1256,7 +1245,7 @@ public class KMJCardSimulator implements KMSEProvider {
     // Next single byte holds the array header.
     // Next 3 bytes holds the Byte array header with the cert1 length.
     // Next 3 bytes holds the Byte array header with the cert2 length.
-    if (totalLen > CERT_CHAIN_MAX_SIZE) {
+    if (totalLen > (short) (CERT_CHAIN_MAX_SIZE - 2)) {
       KMException.throwIt(KMError.INVALID_INPUT_LENGTH);
     }
     short persistedLen = Util.getShort(certificateChain, (short) 0);
@@ -1318,12 +1307,5 @@ public class KMJCardSimulator implements KMSEProvider {
     aesRngCipher = null;
     entropyPool = null;
     rndNum = null;
-    masterKey = null;
   }
-
-  @Override
-  public void getMasterKey(byte[] buf, short off, short len) {
-    masterKey.getKey(buf, (short) off);
-  }
-
 }
