@@ -18,6 +18,7 @@ package com.android.javacard.keymaster;
 import org.globalplatform.upgrade.Element;
 import org.globalplatform.upgrade.UpgradeManager;
 
+import com.android.javacard.keymaster.KMAttestationCertImpl;
 import com.android.javacard.keymaster.KMKeymasterApplet;
 
 import javacard.framework.JCSystem;
@@ -1211,7 +1212,9 @@ public class KMAndroidSEProvider implements KMSEProvider {
   }
   
   @Override
-  public void onUninstall() {
+  public void uninstall() {
+    KMAttestationCertImpl.uninstall();
+    KMRsaOAEPEncoding.uninstall();
     androidSEProvider = null;
     aesGcmCipher = null;
   }

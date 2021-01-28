@@ -421,7 +421,7 @@ public class KMDecoder {
     return totalLen;
   }
   
-  public void onUninstall() {
+  public void uninstall() {
     decoder = null;
   }
 }

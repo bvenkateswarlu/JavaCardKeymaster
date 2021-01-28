@@ -168,4 +168,7 @@ public class KMInteger extends KMType {
       (short)8);
   }
 
+  public static void uninstall() {
+    prototype = null;
+  }
 }

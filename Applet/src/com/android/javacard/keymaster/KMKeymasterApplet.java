@@ -221,11 +221,36 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
   /** Uninstalls the applet after cleaning the repository. */
   @Override
   public void uninstall() {
-    repository.onUninstall();
-    seProvider.onUninstall();
-    KMException.onUninstall();
-    encoder.onUninstall();
-    decoder.onUninstall();
+    KMArray.uninstall();
+    KMBoolTag.uninstall();
+    KMByteBlob.uninstall();
+    KMByteTag.uninstall();
+    KMEnum.uninstall();
+    KMEnumArrayTag.uninstall();
+    KMEnumTag.uninstall();
+    KMHardwareAuthToken.uninstall();
+    KMHmacSharingParameters.uninstall();
+    KMInteger.uninstall();
+    KMIntegerArrayTag.uninstall();
+    KMIntegerTag.uninstall();
+    KMKeyCharacteristics.uninstall();
+    KMKeyParameters.uninstall();
+    KMOperationState.uninstall();
+    KMTag.uninstall();
+    KMType.uninstall();
+    KMVerificationToken.uninstall();
+    KMException.uninstall();
+    repository.uninstall();
+    seProvider.uninstall();
+    encoder.uninstall();
+    decoder.uninstall();
+    repository = null;
+    seProvider = null;
+    encoder = null;
+    decoder = null;
+    tmpVariables = null;
+    data = null;
+    buffer = null;
   }
 
   private short mapISOErrorToKMError(short reason) {

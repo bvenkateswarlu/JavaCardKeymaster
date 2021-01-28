@@ -107,4 +107,8 @@ public class KMBoolTag extends KMTag {
   public static short[] getTags(){
     return tags;
   }
+
+  public static void uninstall() {
+    prototype = null;
+  }
 }

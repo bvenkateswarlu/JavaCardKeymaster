@@ -1298,7 +1298,8 @@ public class KMJCardSimulator implements KMSEProvider {
   }
 
   @Override
-  public void onUninstall() {
+  public void uninstall() {
+    KMAttestationCertImpl.uninstall();
     jCardSimulator = null;
     kdf = null;
     hmacSignature = null;

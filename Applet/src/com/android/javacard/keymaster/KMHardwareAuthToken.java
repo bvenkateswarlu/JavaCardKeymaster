@@ -160,4 +160,8 @@ public class KMHardwareAuthToken extends KMType {
     short arrPtr = getVals();
     KMArray.cast(arrPtr).add(MAC, vals);
   }
+
+  public static void uninstall() {
+    prototype = null;
+  }
 }

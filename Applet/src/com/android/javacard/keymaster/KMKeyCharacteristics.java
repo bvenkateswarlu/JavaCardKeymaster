@@ -99,4 +99,8 @@ public class KMKeyCharacteristics extends KMType {
     short arrPtr = getVals();
     KMArray.cast(arrPtr).add(HARDWARE_ENFORCED, ptr);
   }
+
+  public static void uninstall() {
+    prototype = null;
+  }
 }

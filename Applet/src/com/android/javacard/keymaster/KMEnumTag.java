@@ -30,7 +30,7 @@ public class KMEnumTag extends KMTag {
 
 
   // The allowed tag keys of type enum tag.
-  private static short[] tags = {
+  private static final short[] tags = {
     ALGORITHM, ECCURVE, BLOB_USAGE_REQ, USER_AUTH_TYPE, ORIGIN, HARDWARE_TYPE
   };
 
@@ -144,5 +144,10 @@ public class KMEnumTag extends KMTag {
       return heap[(short)(tagPtr+TLV_HEADER_SIZE+4)];
     }
     return KMType.INVALID_VALUE;
+  }
+
+  public static void uninstall() {
+    prototype = null;
+    enums = null;
   }
 }

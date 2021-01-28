@@ -30,7 +30,7 @@ public class KMEnumArrayTag extends KMTag {
   private static short instPtr;
 
   // The allowed tag keys of enum array type.
-  private static short[] tags = {PURPOSE, BLOCK_MODE, DIGEST, PADDING};
+  private static final short[] tags = {PURPOSE, BLOCK_MODE, DIGEST, PADDING};
 
   // Tag Values.
   private static Object[] enums = null;
@@ -286,5 +286,10 @@ public class KMEnumArrayTag extends KMTag {
     } else {
       return false;
     }
+  }
+
+  public static void uninstall() {
+    prototype = null;
+    enums = null;
   }
 }

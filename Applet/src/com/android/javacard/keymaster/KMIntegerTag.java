@@ -191,4 +191,8 @@ public class KMIntegerTag extends KMTag {
     }
     return false;
   }
+
+  public static void uninstall() {
+    prototype = null;
+  }
 }

@@ -107,4 +107,8 @@ public class KMArray extends KMType {
   public byte[] getBuffer() {
     return heap;
   }
+
+  public static void uninstall() {
+    prototype = null;
+  }
 }

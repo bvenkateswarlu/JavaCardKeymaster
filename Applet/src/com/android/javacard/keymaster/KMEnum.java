@@ -30,7 +30,7 @@ public class KMEnum extends KMType {
   private static short instPtr;
 
   // The allowed enum types.
-  private static short[] types = {
+  private static final short[] types = {
     HARDWARE_TYPE,
     KEY_FORMAT,
     KEY_DERIVATION_FUNCTION,
@@ -156,5 +156,10 @@ public class KMEnum extends KMType {
     }
     // return false if key does not exist
     return false;
+  }
+
+  public static void uninstall() {
+    prototype = null;
+    enums = null;
   }
 }

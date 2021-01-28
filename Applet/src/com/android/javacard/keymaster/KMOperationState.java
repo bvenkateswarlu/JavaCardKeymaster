@@ -243,4 +243,11 @@ public class KMOperationState {
   public short getMacLength() {
     return Util.getShort(data, MAC_LENGTH);
   }
+
+  public static void uninstall() {
+    prototype = null;
+    op = null;
+    data = null;
+    slot = null;
+  }
 }

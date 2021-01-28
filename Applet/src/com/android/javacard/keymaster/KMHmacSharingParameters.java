@@ -98,4 +98,8 @@ public class KMHmacSharingParameters extends KMType {
     short arrPtr = getVals();
     return KMArray.cast(arrPtr).get(SEED);
   }
+
+  public static void uninstall() {
+    prototype = null;
+  }
 }

@@ -240,4 +240,8 @@ public class KMRsaOAEPEncoding extends Cipher {
               KMAndroidSEProvider.TMP_ARRAY_SIZE, (byte) 0);
     }
   }
+
+  public static void uninstall() {
+    mgf1Buf = null;
+  }
 }

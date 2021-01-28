@@ -145,4 +145,7 @@ public class KMIntegerArrayTag extends KMTag {
     return false;
   }
 
+  public static void uninstall() {
+    prototype = null;
+  }
 }
