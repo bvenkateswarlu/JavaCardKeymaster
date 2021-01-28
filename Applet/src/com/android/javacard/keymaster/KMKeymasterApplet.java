@@ -67,6 +67,7 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
   private static final byte INIT_STATE = KM_BEGIN_STATE + 2;
   private static final byte IN_PROVISION_STATE = KM_BEGIN_STATE + 3;
   private static final byte ACTIVE_STATE = KM_BEGIN_STATE + 4;
+  private static final byte UNINSTALLED_STATE = KM_BEGIN_STATE + 5;
 
   // Commands
   private static final byte INS_BEGIN_KM_CMD = 0x00;
@@ -208,6 +209,8 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
     repository.onSelect();
     if (keymasterState == KMKeymasterApplet.INIT_STATE) {
       keymasterState = KMKeymasterApplet.IN_PROVISION_STATE;
+    } else if (keymasterState == KMKeymasterApplet.UNINSTALLED_STATE) {
+      return false;
     }
     return true;
   }
@@ -251,6 +254,9 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
     tmpVariables = null;
     data = null;
     buffer = null;
+    if (keymasterState != KMKeymasterApplet.UNINSTALLED_STATE) {
+      keymasterState = KMKeymasterApplet.UNINSTALLED_STATE;
+    }
   }
 
   private short mapISOErrorToKMError(short reason) {
@@ -320,7 +326,8 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
       repository.onProcess();
       // Verify whether applet is in correct state.
       if ((keymasterState == KMKeymasterApplet.INIT_STATE)
-              || (keymasterState == KMKeymasterApplet.ILLEGAL_STATE)) {
+              || (keymasterState == KMKeymasterApplet.ILLEGAL_STATE)
+              || (keymasterState == KMKeymasterApplet.UNINSTALLED_STATE)) {
         ISOException.throwIt(ISO7816.SW_CONDITIONS_NOT_SATISFIED);
       }
       // If this is select applet apdu which is selecting this applet then
