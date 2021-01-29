@@ -864,7 +864,7 @@ public class KMAttestationCertImpl implements KMAttestationCert {
     return uniqueId(timeOffset);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     stack = null;
     swParams = null;
     hwParams = null;

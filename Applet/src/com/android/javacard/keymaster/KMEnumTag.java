@@ -146,7 +146,7 @@ public class KMEnumTag extends KMTag {
     return KMType.INVALID_VALUE;
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
     enums = null;
   }

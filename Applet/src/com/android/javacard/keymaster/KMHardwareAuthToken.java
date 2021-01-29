@@ -161,7 +161,7 @@ public class KMHardwareAuthToken extends KMType {
     KMArray.cast(arrPtr).add(MAC, vals);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

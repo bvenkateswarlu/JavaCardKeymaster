@@ -289,7 +289,7 @@ public class KMRepository implements KMUpgradable {
     clearDataEntry(COMPUTED_HMAC_KEY);
   }
 
-  public void uninstall() {
+  public void onUninstall() {
     // Javacard Runtime environment cleans up the data.
     repository = null;
   }

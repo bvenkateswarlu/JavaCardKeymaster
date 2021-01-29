@@ -127,7 +127,7 @@ public class KMByteTag extends KMTag {
     return false;
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

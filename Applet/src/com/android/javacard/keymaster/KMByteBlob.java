@@ -122,7 +122,7 @@ public class KMByteBlob extends KMType {
     Util.setShort(heap, (short) (instPtr + 1), length);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

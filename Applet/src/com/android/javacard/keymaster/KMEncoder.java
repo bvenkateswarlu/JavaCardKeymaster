@@ -381,7 +381,7 @@ public class KMEncoder {
   }
 
    */
-  public void uninstall() {
+  public void onUninstall() {
     encoder = null;
     stack = null;
   }

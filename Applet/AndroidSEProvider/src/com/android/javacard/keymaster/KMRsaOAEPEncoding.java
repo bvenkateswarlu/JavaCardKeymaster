@@ -241,7 +241,7 @@ public class KMRsaOAEPEncoding extends Cipher {
     }
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     mgf1Buf = null;
   }
 }

@@ -478,5 +478,5 @@ public interface KMSEProvider extends KMUpgradable {
   /**
    * The implementation of this function should release the resources.
    */
-  void uninstall();
+  void onUninstall();
 }

@@ -100,7 +100,7 @@ public class KMKeyCharacteristics extends KMType {
     KMArray.cast(arrPtr).add(HARDWARE_ENFORCED, ptr);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

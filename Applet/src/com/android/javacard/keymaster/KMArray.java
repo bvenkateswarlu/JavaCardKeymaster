@@ -108,7 +108,7 @@ public class KMArray extends KMType {
     return heap;
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

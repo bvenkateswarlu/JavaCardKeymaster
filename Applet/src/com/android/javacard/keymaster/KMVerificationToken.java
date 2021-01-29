@@ -148,7 +148,7 @@ public class KMVerificationToken extends KMType {
     KMArray.cast(arrPtr).add(SECURITY_LEVEL, vals);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

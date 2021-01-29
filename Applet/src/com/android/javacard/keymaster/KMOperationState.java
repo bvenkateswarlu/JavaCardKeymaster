@@ -244,7 +244,7 @@ public class KMOperationState {
     return Util.getShort(data, MAC_LENGTH);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
     op = null;
     data = null;

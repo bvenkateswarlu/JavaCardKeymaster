@@ -309,7 +309,7 @@ public class KMKeyParameters extends KMType {
     return KMKeyParameters.instance(arrPtr);
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
   }
 }

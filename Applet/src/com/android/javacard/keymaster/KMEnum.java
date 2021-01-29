@@ -158,7 +158,7 @@ public class KMEnum extends KMType {
     return false;
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
     enums = null;
   }

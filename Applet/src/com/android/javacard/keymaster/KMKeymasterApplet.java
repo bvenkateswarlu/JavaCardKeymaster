@@ -219,31 +219,32 @@ public class KMKeymasterApplet extends Applet implements AppletEvent, ExtendedLe
   }
 
   /** Uninstalls the applet after cleaning the repository. */
+
   @Override
   public void uninstall() {
-    KMArray.uninstall();
-    KMBoolTag.uninstall();
-    KMByteBlob.uninstall();
-    KMByteTag.uninstall();
-    KMEnum.uninstall();
-    KMEnumArrayTag.uninstall();
-    KMEnumTag.uninstall();
-    KMHardwareAuthToken.uninstall();
-    KMHmacSharingParameters.uninstall();
-    KMInteger.uninstall();
-    KMIntegerArrayTag.uninstall();
-    KMIntegerTag.uninstall();
-    KMKeyCharacteristics.uninstall();
-    KMKeyParameters.uninstall();
-    KMOperationState.uninstall();
-    KMTag.uninstall();
-    KMType.uninstall();
-    KMVerificationToken.uninstall();
-    KMException.uninstall();
-    repository.uninstall();
-    seProvider.uninstall();
-    encoder.uninstall();
-    decoder.uninstall();
+    KMArray.onUninstall();
+    KMBoolTag.onUninstall();
+    KMByteBlob.onUninstall();
+    KMByteTag.onUninstall();
+    KMEnum.onUninstall();
+    KMEnumArrayTag.onUninstall();
+    KMEnumTag.onUninstall();
+    KMHardwareAuthToken.onUninstall();
+    KMHmacSharingParameters.onUninstall();
+    KMInteger.onUninstall();
+    KMIntegerArrayTag.onUninstall();
+    KMIntegerTag.onUninstall();
+    KMKeyCharacteristics.onUninstall();
+    KMKeyParameters.onUninstall();
+    KMOperationState.onUninstall();
+    KMTag.onUninstall();
+    KMType.onUninstall();
+    KMVerificationToken.onUninstall();
+    KMException.onUninstall();
+    repository.onUninstall();
+    seProvider.onUninstall();
+    encoder.onUninstall();
+    decoder.onUninstall();
     repository = null;
     seProvider = null;
     encoder = null;

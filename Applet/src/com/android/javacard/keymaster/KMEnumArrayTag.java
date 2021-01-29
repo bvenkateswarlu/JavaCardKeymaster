@@ -288,7 +288,7 @@ public class KMEnumArrayTag extends KMTag {
     }
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     prototype = null;
     enums = null;
   }

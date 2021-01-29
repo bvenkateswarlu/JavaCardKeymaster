@@ -1212,9 +1212,9 @@ public class KMAndroidSEProvider implements KMSEProvider {
   }
   
   @Override
-  public void uninstall() {
-    KMAttestationCertImpl.uninstall();
-    KMRsaOAEPEncoding.uninstall();
+  public void onUninstall() {
+    KMAttestationCertImpl.onUninstall();
+    KMRsaOAEPEncoding.onUninstall();
     androidSEProvider = null;
     aesGcmCipher = null;
   }

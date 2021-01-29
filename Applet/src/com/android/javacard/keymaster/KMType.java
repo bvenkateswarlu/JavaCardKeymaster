@@ -302,7 +302,7 @@ public abstract class KMType {
     return ptr;
   }
 
-  public static void uninstall() {
+  public static void onUninstall() {
     repository = null;
     heap = null;
   }
