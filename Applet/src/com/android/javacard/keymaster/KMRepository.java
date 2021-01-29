@@ -254,8 +254,7 @@ public class KMRepository implements KMUpgradable {
   /**
    * Masterkey is stored as a Javacard Key object instead of byte array.
    * When master key is stored as a Key object, the Javacard OS internally
-   * provides appropriate security measures for the key to avoid any potential
-   *  attacks.
+   * provides appropriate security measures for the key to protect the key.
    * The master key is maintained by Repository class so the Key object is
    * created in this class itself rather than creating it in the SEProvider.
    */
@@ -309,11 +308,10 @@ public class KMRepository implements KMUpgradable {
     // If write through caching is implemented then this method will restore the data into cache
   }
 
-  public short getMasterKeySecret() {
-    short key = KMByteBlob.instance(MASTER_KEY_SIZE);
-    masterKey.getKey(KMByteBlob.cast(key).getBuffer(), KMByteBlob.cast(key)
-            .getStartOff());
-    return key;
+  public void getMasterKeySecret(byte[] buffer, short offset, short length) {
+    if (length != MASTER_KEY_SIZE)
+      ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+    masterKey.getKey(buffer, offset);
   }
 
   // This function uses memory from the back of the heap(transient memory). Call
