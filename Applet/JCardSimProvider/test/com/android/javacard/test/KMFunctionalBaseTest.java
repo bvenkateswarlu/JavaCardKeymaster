@@ -27,6 +27,7 @@ import com.android.javacard.keymaster.KMIntegerTag;
 import com.android.javacard.keymaster.KMJCardSimulator;
 import com.android.javacard.keymaster.KMKeyCharacteristics;
 import com.android.javacard.keymaster.KMKeyParameters;
+import com.android.javacard.keymaster.KMRepository;
 import com.android.javacard.keymaster.KMSEProvider;
 import com.android.javacard.keymaster.KMTag;
 import com.android.javacard.keymaster.KMType;
@@ -75,18 +76,20 @@ public class KMFunctionalBaseTest {
   public static int OS_VERSION = 1;
   public static int OS_PATCH_LEVEL = 2;
   
-	public CardSimulator simulator;
 	public KMEncoder encoder;
 	public KMDecoder decoder;
 	public KMSEProvider cryptoProvider;
+	public KMRepositorySwitch repositorySwitch;
 	public short keyBlobPtr;
 	public short keyCharacteristicsPtr;
 
 	public KMFunctionalBaseTest() {
 		cryptoProvider = new KMJCardSimulator();
-		simulator = new CardSimulator();
 		encoder = new KMEncoder();
 		decoder = new KMDecoder();
+		repositorySwitch = new KMRepositorySwitch();
+		// All the allocations happens from Test Repository.
+		repositorySwitch.testExecutionContext();
 	}
 
   public CommandAPDU encodeApdu(byte ins, short cmd) {
@@ -103,11 +106,14 @@ public class KMFunctionalBaseTest {
     return new CommandAPDU(apdu);
   }
 
+  public ResponseAPDU transmit(CommandAPDU apdu) {
+    return repositorySwitch.transmit(apdu);
+  }
+
   public short GenerateKey(Map<Short, KMParameterValue> keyParameters,
       boolean negativeTest) {
     short tagIndex = 0;
     short byteBlob = 0;
-    short type = 0;
     short arrPtr = KMArray.instance((short) keyParameters.size());
     for (Map.Entry<Short, KMParameterValue> entry : keyParameters.entrySet()) {
       switch (entry.getKey()) {
@@ -168,7 +174,7 @@ public class KMFunctionalBaseTest {
     KMArray arg = KMArray.cast(arrPtr);
     arg.add((short) 0, keyParams);
     CommandAPDU apdu = encodeApdu((byte) INS_GENERATE_KEY_CMD, arrPtr);
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     if (response.getSW() == 0x9000) {
       if (negativeTest) {
         byte[] respBuf = response.getBytes();
@@ -206,7 +212,7 @@ public class KMFunctionalBaseTest {
     CommandAPDU apdu = encodeApdu((byte) INS_GET_KEY_CHARACTERISTICS_CMD,
         arrPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     if (response.getSW() == 0x9000) {
       short ret = KMArray.instance((short) 2);
       KMArray.cast(ret).add((short) 0, KMInteger.exp());
@@ -224,17 +230,13 @@ public class KMFunctionalBaseTest {
 
   public void CheckedDeleteKey(byte[] keyBlob, short off, short len) {
     short keyblobPtr = KMByteBlob.instance(len);
-    Util.arrayCopy(
-        keyBlob,
-        off,
-        KMByteBlob.cast(keyblobPtr).getBuffer(),
-        KMByteBlob.cast(keyblobPtr).getStartOff(),
-        len);
+    Util.arrayCopy(keyBlob, off, KMByteBlob.cast(keyblobPtr).getBuffer(),
+        KMByteBlob.cast(keyblobPtr).getStartOff(), len);
     short arrPtr = KMArray.instance((short) 1);
     KMArray.cast(arrPtr).add((short) 0, keyblobPtr);
     CommandAPDU apdu = encodeApdu((byte) INS_DELETE_KEY_CMD, arrPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(response.getSW(), 0x9000);
     byte[] respBuf = response.getBytes();
     Assert.assertEquals(respBuf[0], KMError.OK);
@@ -364,15 +366,19 @@ public class KMFunctionalBaseTest {
   }
 
   public void provision() {
-    provisionSigningKey();
-    provisionSigningCertificate();
-    provisionCertificateParams();
-    provisionSharedSecret();
-    provisionAttestIds();
-    // set bootup parameters
-    setBootParams((short) OS_VERSION, (short) OS_PATCH_LEVEL, (short) 0,
-        (short) 0);
-    // provisionLocked(simulator);
+    try {
+      provisionSigningKey();
+      provisionSigningCertificate();
+      provisionCertificateParams();
+      provisionSharedSecret();
+      provisionAttestIds();
+      // set bootup parameters
+      setBootParams((short) OS_VERSION, (short) OS_PATCH_LEVEL, (short) 0,
+          (short) 0);
+      // provisionLocked(simulator);
+    } finally {
+      repositorySwitch.cleanRepository();
+    }
   }
 
   private void setBootParams(short osVersion, short osPatchLevel,
@@ -411,7 +417,7 @@ public class KMFunctionalBaseTest {
     vals.add((short) 7, deviceLockedPtr);
     CommandAPDU apdu = encodeApdu((byte) INS_SET_BOOT_PARAMS_CMD, arrPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(0x9000, response.getSW());
 
   }
@@ -432,7 +438,7 @@ public class KMFunctionalBaseTest {
     CommandAPDU apdu = encodeApdu(
         (byte) INS_PROVISION_ATTESTATION_CERT_CHAIN_CMD, byteBlobPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(0x9000, response.getSW());
   }
 
@@ -475,7 +481,7 @@ public class KMFunctionalBaseTest {
     CommandAPDU apdu = encodeApdu((byte) INS_PROVISION_ATTESTATION_KEY_CMD,
         finalArrayPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(0x9000, response.getSW());
   }
 
@@ -491,7 +497,7 @@ public class KMFunctionalBaseTest {
     CommandAPDU apdu = encodeApdu(
         (byte) INS_PROVISION_ATTESTATION_CERT_PARAMS_CMD, arrPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(0x9000, response.getSW());
   }
 
@@ -507,7 +513,7 @@ public class KMFunctionalBaseTest {
     CommandAPDU apdu = encodeApdu((byte) INS_PROVISION_PRESHARED_SECRET_CMD,
         arrPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(0x9000, response.getSW());
   }
 
@@ -546,7 +552,7 @@ public class KMFunctionalBaseTest {
     CommandAPDU apdu = encodeApdu((byte) INS_PROVISION_ATTEST_IDS_CMD,
         outerArrPtr);
     // print(commandAPDU.getBytes());
-    ResponseAPDU response = simulator.transmitCommand(apdu);
+    ResponseAPDU response = transmit(apdu);
     Assert.assertEquals(0x9000, response.getSW());
   }
 }

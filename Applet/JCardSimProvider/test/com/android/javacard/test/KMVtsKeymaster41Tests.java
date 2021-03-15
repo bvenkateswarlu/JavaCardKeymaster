@@ -22,19 +22,13 @@ public class KMVtsKeymaster41Tests extends KMFunctionalBaseTest {
 
   @Before
   public void init() {
-    // Create simulator
-    AID appletAID = AIDUtil.create("A000000062");
-    simulator.installApplet(appletAID, KMJCardSimApplet.class);
-    // Select applet
-    simulator.selectApplet(appletAID);
+    repositorySwitch.installAndSelectApplet();
     provision();
   }
 
   @After
   public void finish() {
-    AID appletAID = AIDUtil.create("A000000062");
-    // Delete i.e. uninstall applet
-    simulator.deleteApplet(appletAID);
+    repositorySwitch.deleteApplet();
   }
 
   @Test
@@ -229,6 +223,7 @@ public class KMVtsKeymaster41Tests extends KMFunctionalBaseTest {
       Assert.assertTrue(keyChars.compare(keyCharsNew));
 
       CheckedDeleteKey(keyBlobCopy, (short) 0, (short) keyBlobCopy.length);
+      repositorySwitch.cleanRepository();
     }
   }
 
@@ -266,6 +261,7 @@ public class KMVtsKeymaster41Tests extends KMFunctionalBaseTest {
       Assert.assertTrue(keyChars.compare(keyCharsNew));
 
       CheckedDeleteKey(keyBlobCopy, (short) 0, (short) keyBlobCopy.length);
+      repositorySwitch.cleanRepository();
     }
   }
 
@@ -310,6 +306,7 @@ public class KMVtsKeymaster41Tests extends KMFunctionalBaseTest {
           .getKeyParameters().get(KMType.ALGORITHM).byteValue);
 
       CheckedDeleteKey(keyBlobCopy, (short) 0, (short) keyBlobCopy.length);
+      repositorySwitch.cleanRepository();
     }
   }
 
@@ -359,6 +356,7 @@ public class KMVtsKeymaster41Tests extends KMFunctionalBaseTest {
 
         CheckedDeleteKey(keyBlobCopy, (short) 0, (short) keyBlobCopy.length);
       }
+      repositorySwitch.cleanRepository();
     }
   }
 
@@ -406,6 +404,7 @@ public class KMVtsKeymaster41Tests extends KMFunctionalBaseTest {
 
         CheckedDeleteKey(keyBlobCopy, (short) 0, (short) keyBlobCopy.length);
       }
+      repositorySwitch.cleanRepository();
     }
   }
 
