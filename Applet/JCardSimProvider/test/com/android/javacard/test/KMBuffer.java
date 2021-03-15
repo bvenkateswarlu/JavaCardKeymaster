@@ -30,10 +30,13 @@ public class KMBuffer {
     return bufPtr;
   }
 
-  public byte[] getByteArray() {
+  public byte[] clone() {
     byte[] buffer = new byte[(short) KMByteBlob.cast(bufPtr).length()];
-    Util.arrayCopy(buffer, (short) 0, KMByteBlob.cast(bufPtr).getBuffer(),
+    Util.arrayCopy(
+        KMByteBlob.cast(bufPtr).getBuffer(),
         KMByteBlob.cast(bufPtr).getStartOff(),
+        buffer,
+        (short) 0,
         KMByteBlob.cast(bufPtr).length());
     return buffer;
   }

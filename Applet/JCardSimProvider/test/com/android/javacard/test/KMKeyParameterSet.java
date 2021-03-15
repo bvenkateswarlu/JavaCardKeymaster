@@ -130,6 +130,7 @@ public class KMKeyParameterSet {
         break;
       case KMType.RSA_PUBLIC_EXPONENT:
       case KMType.KEYSIZE:
+      case KMType.MIN_MAC_LENGTH:
         if (val.integer != other.integer)
           return false;
         break;
@@ -144,6 +145,7 @@ public class KMKeyParameterSet {
           return false;
         break;
       case KMType.ALGORITHM:
+      case KMType.ECCURVE:
       case KMType.NO_AUTH_REQUIRED:
       case KMType.INCLUDE_UNIQUE_ID:
       case KMType.RESET_SINCE_ID_ROTATION:
@@ -166,6 +168,20 @@ public class KMKeyParameterSet {
       KMParameterValue val = new KMParameterValue();
       val.integer = keySize;
       keyParameters_.put(KMType.KEYSIZE, val);
+      return this;
+    }
+
+    public KeyParametersSetBuilder setMinMacLength(int minMacLen) {
+      KMParameterValue val = new KMParameterValue();
+      val.integer = minMacLen;
+      keyParameters_.put(KMType.MIN_MAC_LENGTH, val);
+      return this;
+    }
+
+    public KeyParametersSetBuilder setCurve(byte curve) {
+      KMParameterValue val = new KMParameterValue();
+      val.byteValue = curve;
+      keyParameters_.put(KMType.ECCURVE, val);
       return this;
     }
 

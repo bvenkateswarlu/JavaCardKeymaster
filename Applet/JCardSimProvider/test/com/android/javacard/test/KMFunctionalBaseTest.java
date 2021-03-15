@@ -112,8 +112,9 @@ public class KMFunctionalBaseTest {
     for (Map.Entry<Short, KMParameterValue> entry : keyParameters.entrySet()) {
       switch (entry.getKey()) {
       case KMType.ALGORITHM:
+      case KMType.ECCURVE:
         KMArray.cast(arrPtr).add(tagIndex++,
-            KMEnumTag.instance(KMType.ALGORITHM, entry.getValue().byteValue));
+            KMEnumTag.instance(entry.getKey(), entry.getValue().byteValue));
         break;
       case KMType.DIGEST:
       case KMType.PADDING:
@@ -128,9 +129,10 @@ public class KMFunctionalBaseTest {
         KMArray.cast(arrPtr).add(tagIndex++, val);
         break;
       case KMType.KEYSIZE:
-        short keySize = KMIntegerTag.instance(KMType.UINT_TAG, KMType.KEYSIZE,
+      case KMType.MIN_MAC_LENGTH:
+        short length = KMIntegerTag.instance(KMType.UINT_TAG, entry.getKey(),
             KMInteger.uint_16((short) entry.getValue().integer));
-        KMArray.cast(arrPtr).add(tagIndex++, keySize);
+        KMArray.cast(arrPtr).add(tagIndex++, length);
         break;
       case KMType.RSA_PUBLIC_EXPONENT:
         byte[] bytes = ByteBuffer.allocate(4).putInt(entry.getValue().integer)
@@ -218,6 +220,24 @@ public class KMFunctionalBaseTest {
       return error;
     }
     return (short) response.getSW();
+  }
+
+  public void CheckedDeleteKey(byte[] keyBlob, short off, short len) {
+    short keyblobPtr = KMByteBlob.instance(len);
+    Util.arrayCopy(
+        keyBlob,
+        off,
+        KMByteBlob.cast(keyblobPtr).getBuffer(),
+        KMByteBlob.cast(keyblobPtr).getStartOff(),
+        len);
+    short arrPtr = KMArray.instance((short) 1);
+    KMArray.cast(arrPtr).add((short) 0, keyblobPtr);
+    CommandAPDU apdu = encodeApdu((byte) INS_DELETE_KEY_CMD, arrPtr);
+    // print(commandAPDU.getBytes());
+    ResponseAPDU response = simulator.transmitCommand(apdu);
+    Assert.assertEquals(response.getSW(), 0x9000);
+    byte[] respBuf = response.getBytes();
+    Assert.assertEquals(respBuf[0], KMError.OK);
   }
 
   // Note: Only to be used by testNewKeyGeneration_*
@@ -309,6 +329,18 @@ public class KMFunctionalBaseTest {
       break;
     }
     return null;
+  }
+
+  public int[] ValidDigests(boolean withNone) {
+    if (withNone) {
+      return new int[] { KMType.DIGEST_NONE, KMType.SHA2_256 };
+    } else {
+      return new int[] { KMType.SHA2_256 };
+    }
+  }
+
+  public int[] ValidCurves() {
+    return new int[] { KMType.P_256 };
   }
 
   public int[] ValidKeySizes(short algorithm) {
